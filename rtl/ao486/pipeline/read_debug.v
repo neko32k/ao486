@@ -53,9 +53,9 @@ module read_debug(
 
 //------------------------------------------------------------------------------
 
-wire        rd_debug_trigger;
-wire [31:0] rd_debug_linear;
-wire [3:0]  rd_debug_length;
+reg        rd_debug_trigger;
+reg [31:0] rd_debug_linear;
+reg [3:0]  rd_debug_length;
 
 wire [31:0] rd_debug_linear_last;
 
@@ -73,9 +73,9 @@ reg rd_debug_b3_reg;
 
 //------------------------------------------------------------------------------
 
-assign rd_debug_trigger = read_do; //can be many cycles
-assign rd_debug_linear  = read_address;
-assign rd_debug_length  = read_length;
+always @(posedge clk) rd_debug_trigger <= read_do; //must be 2 cycles or more
+always @(posedge clk) rd_debug_linear  <= read_address;
+always @(posedge clk) rd_debug_length  <= read_length;
 
 assign rd_debug_linear_last = rd_debug_linear + { 28'd0, rd_debug_length } - 32'd1;
 
@@ -89,7 +89,7 @@ assign rd_debug_b0_trigger =
     ( rd_debug_linear      <= { dr0[31:3], dr0[2:0] | ~(debug_len0)} ) &&
     ( rd_debug_linear_last >= { dr0[31:3], dr0[2:0] &   debug_len0 } );
     
-always @(posedge clk or negedge rst_n) begin
+always @(posedge clk) begin
     if(rst_n == 1'b0)               rd_debug_b0_reg <= `FALSE;
     else if(rd_ready)               rd_debug_b0_reg <= `FALSE;
     else if(rd_debug_b0_trigger)    rd_debug_b0_reg <= `TRUE;
@@ -101,7 +101,7 @@ assign rd_debug_b1_trigger =
     ( rd_debug_linear      <= { dr1[31:3], dr1[2:0] | ~(debug_len1)} ) &&
     ( rd_debug_linear_last >= { dr1[31:3], dr1[2:0] &   debug_len1 } );
 
-always @(posedge clk or negedge rst_n) begin
+always @(posedge clk) begin
     if(rst_n == 1'b0)               rd_debug_b1_reg <= `FALSE;
     else if(rd_ready)               rd_debug_b1_reg <= `FALSE;
     else if(rd_debug_b1_trigger)    rd_debug_b1_reg <= `TRUE;
@@ -113,7 +113,7 @@ assign rd_debug_b2_trigger =
     ( rd_debug_linear      <= { dr2[31:3], dr2[2:0] | ~(debug_len2)} ) &&
     ( rd_debug_linear_last >= { dr2[31:3], dr2[2:0] &   debug_len2 } );
 
-always @(posedge clk or negedge rst_n) begin
+always @(posedge clk) begin
     if(rst_n == 1'b0)               rd_debug_b2_reg <= `FALSE;
     else if(rd_ready)               rd_debug_b2_reg <= `FALSE;
     else if(rd_debug_b2_trigger)    rd_debug_b2_reg <= `TRUE;
@@ -125,7 +125,7 @@ assign rd_debug_b3_trigger =
     ( rd_debug_linear      <= { dr3[31:3], dr3[2:0] | ~(debug_len3)} ) &&
     ( rd_debug_linear_last >= { dr3[31:3], dr3[2:0] &   debug_len3 } );
 
-always @(posedge clk or negedge rst_n) begin
+always @(posedge clk) begin
     if(rst_n == 1'b0)               rd_debug_b3_reg <= `FALSE;
     else if(rd_ready)               rd_debug_b3_reg <= `FALSE;
     else if(rd_debug_b3_trigger)    rd_debug_b3_reg <= `TRUE;

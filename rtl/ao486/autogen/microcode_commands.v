@@ -203,7 +203,7 @@ wire cond_200 = mc_cmd == `CMD_task_switch && mc_cmdex_last == `CMDEX_task_switc
 wire cond_201 = mc_cmd == `CMD_task_switch && mc_cmdex_last == `CMDEX_task_switch_STEP_12;
 wire cond_202 = mc_cmd == `CMD_task_switch && mc_cmdex_last == `CMDEX_task_switch_STEP_13;
 wire cond_203 = mc_cmd == `CMD_task_switch && mc_cmdex_last == `CMDEX_task_switch_STEP_14;
-wire cond_204 = mc_cmd == `CMD_task_switch_3;
+wire cond_204 = mc_cmd == `CMD_task_switch_3 && mc_cmdex_last < `CMDEX_task_switch_3_STEP_15;
 wire cond_205 = mc_cmd == `CMD_task_switch_3 && mc_cmdex_last == `CMDEX_task_switch_3_STEP_15;
 wire cond_206 = mc_cmd == `CMD_task_switch_4 && mc_cmdex_last < `CMDEX_task_switch_4_STEP_10;
 wire cond_207 = mc_cmd == `CMD_SGDT || mc_cmd == `CMD_SIDT;
@@ -284,11 +284,11 @@ wire [3:0] mc_saved_cmdex_to_reg =
     (cond_181)? (   `CMDEX_OUT_protected) :
     mc_saved_cmdex;
 //======================================================== always
-always @(posedge clk or negedge rst_n) begin
+always @(posedge clk) begin
     if(rst_n == 1'b0) mc_saved_command <= 7'd0;
     else              mc_saved_command <= mc_saved_command_to_reg;
 end
-always @(posedge clk or negedge rst_n) begin
+always @(posedge clk) begin
     if(rst_n == 1'b0) mc_saved_cmdex <= 4'd0;
     else              mc_saved_cmdex <= mc_saved_cmdex_to_reg;
 end

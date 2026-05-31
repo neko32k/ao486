@@ -269,10 +269,12 @@ module pipeline(
 //------------------------------------------------------------------------------
 
 // synthesis translate_off
-wire _unused_ok = &{ 1'b0, SW[16:7], 1'b0 };
+//wire _unused_ok = &{ 1'b0, SW[16:7], 1'b0 };
 // synthesis translate_on
 
 //------------------------------------------------------------------------------
+
+wire [1:0]  cpl;
 
 assign prefetch_cpl = cpl;
 
@@ -283,7 +285,7 @@ reg [1:0] pipeline_dec_idle_counter;
 
 assign pipeline_dec_idle                = rd_dec_is_front && prefetchfifo_accept_empty;
 
-always @(posedge clk or negedge rst_n) begin
+always @(posedge clk) begin
     if(rst_n == 1'b0)                                               pipeline_dec_idle_counter <= 2'd0;
     else if(pipeline_dec_idle && pipeline_dec_idle_counter < 2'd3)  pipeline_dec_idle_counter <= pipeline_dec_idle_counter + 2'd1;
     else if(~(pipeline_dec_idle))                                   pipeline_dec_idle_counter <= 2'd0;
@@ -367,8 +369,6 @@ assign exe_reset   = exc_exe_reset   | wr_req_reset_exe;
 assign wr_reset    = exc_wr_reset;
 
 //------------------------------------------------------------------------------
-
-wire [1:0]  cpl;
 
 wire [31:0] gdtr_base;
 wire [15:0] gdtr_limit;
@@ -1415,6 +1415,23 @@ write write_inst(
 
 //------------------------------------------------------------------------------
 
-
+// synthesis translate_off
+cpu_export cpu_export_inst(
+    .clk                (clk),
+    .rst_n              (rst_n),
+    .new_export         (exe_ready),
+    //.commandcount       (),
+           
+    .eax                (eax),
+    .ebx                (ebx),
+    .ecx                (ecx),
+    .edx                (edx),
+    .esp                (esp),
+    .ebp                (ebp),
+    .esi                (esi),
+    .edi                (edi),
+    .eip                (eip)
+);
+// synthesis translate_on
 
 endmodule

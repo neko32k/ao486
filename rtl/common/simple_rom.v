@@ -24,14 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module simple_rom(
-    input                       clk,
+module simple_rom
+(
+    input                clk,
     
-    input       [widthad-1:0]   addr_a,
-    output reg  [width-1:0]     q_a,
+    input  [widthad-1:0] addr_a,
+    output   [width-1:0] q_a,
     
-    input       [widthad-1:0]   addr_b,
-    output reg  [width-1:0]     q_b
+    input  [widthad-1:0] addr_b,
+    output   [width-1:0] q_b
 );
 
 parameter width     = 1;
@@ -39,15 +40,20 @@ parameter widthad   = 1;
 parameter datafile  = "none";
 
 reg [width-1:0] mem [(2**widthad)-1:0];
+reg [widthad-1:0] rdaddr_a;
+reg [widthad-1:0] rdaddr_b;
 
 initial
 begin
-$readmemh(datafile, mem);
+	$readmemh(datafile, mem);
 end
 
 always @(posedge clk) begin
-    q_a <= mem[addr_a];
-    q_b <= mem[addr_b];
+    rdaddr_a <= addr_a;
+    rdaddr_b <= addr_b;
 end
+
+assign q_a = mem[rdaddr_a];
+assign q_b = mem[rdaddr_b];
 
 endmodule

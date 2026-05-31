@@ -3,9 +3,9 @@ assign exe_jecxz_condition = (exe_address_16bit)? ecx[15:0] == 16'd0 : ecx == 32
 
 reg e_invd_code_done;
 reg e_invd_data_done;
-always @(posedge clk or negedge rst_n) begin if(rst_n == 1'b0)       e_invd_code_done <= `FALSE; else if(exe_reset)      e_invd_code_done <= `FALSE; else if(exe_ready)      e_invd_code_done <= `FALSE; else if(invdcode_done)  e_invd_code_done <= `TRUE;
+always @(posedge clk) begin if(rst_n == 1'b0)       e_invd_code_done <= `FALSE; else if(exe_reset)      e_invd_code_done <= `FALSE; else if(exe_ready)      e_invd_code_done <= `FALSE; else if(invdcode_done)  e_invd_code_done <= `TRUE;
 end
-always @(posedge clk or negedge rst_n) begin if(rst_n == 1'b0)       e_invd_data_done <= `FALSE; else if(exe_reset)      e_invd_data_done <= `FALSE; else if(exe_ready)      e_invd_data_done <= `FALSE; else if(invddata_done)  e_invd_data_done <= `TRUE;
+always @(posedge clk) begin if(rst_n == 1'b0)       e_invd_data_done <= `FALSE; else if(exe_reset)      e_invd_data_done <= `FALSE; else if(exe_ready)      e_invd_data_done <= `FALSE; else if(invddata_done)  e_invd_data_done <= `TRUE;
 end
 
 wire [3:0] e_io_allow_bits;
@@ -44,9 +44,9 @@ assign e_cmpxchg_result = (e_cmpxchg_eq)? src : e_cmpxchg_sub[31:0];
 
 reg e_wbinvd_code_done;
 reg e_wbinvd_data_done;
-always @(posedge clk or negedge rst_n) begin if(rst_n == 1'b0)       e_wbinvd_code_done <= `FALSE; else if(exe_reset)      e_wbinvd_code_done <= `FALSE; else if(exe_ready)      e_wbinvd_code_done <= `FALSE; else if(invdcode_done)  e_wbinvd_code_done <= `TRUE;
+always @(posedge clk) begin if(rst_n == 1'b0)       e_wbinvd_code_done <= `FALSE; else if(exe_reset)      e_wbinvd_code_done <= `FALSE; else if(exe_ready)      e_wbinvd_code_done <= `FALSE; else if(invdcode_done)  e_wbinvd_code_done <= `TRUE;
 end
-always @(posedge clk or negedge rst_n) begin if(rst_n == 1'b0)         e_wbinvd_data_done <= `FALSE; else if(exe_reset)        e_wbinvd_data_done <= `FALSE; else if(exe_ready)        e_wbinvd_data_done <= `FALSE; else if(wbinvddata_done)  e_wbinvd_data_done <= `TRUE;
+always @(posedge clk) begin if(rst_n == 1'b0)         e_wbinvd_data_done <= `FALSE; else if(exe_reset)        e_wbinvd_data_done <= `FALSE; else if(exe_ready)        e_wbinvd_data_done <= `FALSE; else if(wbinvddata_done)  e_wbinvd_data_done <= `TRUE;
 end
 
 wire exe_cmd_loop_ecx;
@@ -77,9 +77,7 @@ assign exe_new_tss_max = (glob_descriptor[`DESC_BITS_TYPE] <= 4'd3)? 32'h2B : 32
 wire e_bcd_condition_cf;
 wire exe_bcd_condition_af;
 wire exe_bcd_condition_cf;
-wire [15:0] e_aaa_sum_ax;
 wire [15:0] e_aaa_result;
-wire [15:0] e_aas_sub_ax;
 wire [15:0] e_aas_result;
 wire [7:0]  e_daa_sum_low;
 wire [7:0]  e_daa_step1;
@@ -428,7 +426,7 @@ wire [31:0] exe_buffer_to_reg =
     (cond_285 && cond_36)? ( src) :
     exe_buffer;
 //======================================================== always
-always @(posedge clk or negedge rst_n) begin
+always @(posedge clk) begin
     if(rst_n == 1'b0) exe_buffer <= 32'd0;
     else              exe_buffer <= exe_buffer_to_reg;
 end

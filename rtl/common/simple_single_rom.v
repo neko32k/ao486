@@ -24,26 +24,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module simple_single_rom(
-    input                       clk,
+// altera message_off 10030
+module simple_single_rom
+(
+    input                clk,
     
-    input       [widthad-1:0]   addr,
-    output reg  [width-1:0]     q
+    input  [widthad-1:0] addr,
+    output   [width-1:0] q
 );
 
 parameter width     = 1;
 parameter widthad   = 1;
 parameter datafile  = "none";
 
-reg [width-1:0] mem [(2**widthad)-1:0];
+reg [width-1:0]   mem [(2**widthad)-1:0];
+reg [widthad-1:0] rdaddr;
 
 initial
 begin
-$readmemb(datafile, mem);
+	$readmemb(datafile, mem);
 end
 
-always @(posedge clk) begin
-    q <= mem[addr];
-end
+
+always @(posedge clk) rdaddr <= addr;
+assign q = mem[rdaddr];
 
 endmodule
